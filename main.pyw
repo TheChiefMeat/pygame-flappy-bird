@@ -1,5 +1,5 @@
 ## Imports Libraries
-import pygame, sys
+import pygame, sys, random
 
 ## draw_floor function, draws two images of the floor
 def draw_floor():
@@ -9,8 +9,10 @@ def draw_floor():
 
 ## creates a new pipe with rectangle at coords
 def create_pipe():
-    new_pipe = pipe_surface.get_rect(midtop = (288,512))
-    return new_pipe
+    random_pipe_pos = random.choice(pipe_height)
+    bottom_pipe = pipe_surface.get_rect(midtop = (288,random_pipe_pos))
+    top_pipe = pipe_surface.get_rect(midbottom = (288,random_pipe_pos - 300))
+    return bottom_pipe,top_pipe
 
 ## for every pipe in the list pipes, move left 5px
 def move_pipes(pipes):
@@ -20,7 +22,12 @@ def move_pipes(pipes):
 
 def draw_pipes(pipes):
     for pipe in pipes:
-        screen.blit(pipe_surface,pipe)
+        ## If pipe is at the bottom , do nothing, else flip the pipe
+        if pipe.bottom >= 1024:
+            screen.blit(pipe_surface,pipe)
+        else:
+            flip_pipe = pygame.transform.flip(pipe_surface,False,True)
+            screen.blit(flip_pipe,pipe)
 
 
 ## initialises pygame
@@ -55,11 +62,14 @@ pipe_surface = pygame.transform.scale2x(pipe_surface)
 pipe_list = []
 SPAWNPIPE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPIPE,1200)
+## possible heights for pipes
+pipe_height = [400,600,800]
 
 while True:
     for event in pygame.event.get():
         ## if game quit, the quit game
         if event.type == pygame.QUIT:
+            pygame.display.quit()
             pygame.quit()
             sys.exit()
         ## If space bar is pressed, paused gravity and move bird up
@@ -68,7 +78,7 @@ while True:
                 bird_movement = 0
                 bird_movement -= 12
         if event.type == SPAWNPIPE:
-            pipe_list.append(create_pipe())
+            pipe_list.extend(create_pipe())
 
     ## draws images
     screen.blit(bg_surface,(0,0))
