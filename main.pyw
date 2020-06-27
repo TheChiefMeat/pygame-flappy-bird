@@ -122,6 +122,8 @@ pipe_height = [400,600,800]
 game_over_surface = pygame.transform.scale2x(pygame.image.load('assets/message.png').convert_alpha())
 game_over_rect = game_over_surface.get_rect(center = (288,512))
 
+flap_sound = pygame.mixer.Sound('sound/sfx_wing.wav')
+
 while True:
     for event in pygame.event.get():
         ## if game quit, the quit game
@@ -134,6 +136,7 @@ while True:
             if event.key == pygame.K_SPACE and game_active:
                 bird_movement = 0
                 bird_movement -= 12
+                flap_sound.play()
             if event.key == pygame.K_SPACE and game_active == False:
                 game_active = True
                 pipe_list.clear()
