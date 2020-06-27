@@ -39,6 +39,10 @@ def check_collision(pipes):
     
     return True
 
+## rotates bird
+def rotate_bird(bird):
+    new_bird = pygame.transform.rotozoom(bird,-bird_movement * 3,1)
+    return new_bird
 
 ## initialises pygame
 pygame.init()
@@ -63,9 +67,18 @@ floor_surface = pygame.transform.scale2x(floor_surface)
 ## sets floor position to be at 0
 floor_x_pos = 0
 
-bird_surface = pygame.image.load('assets/bluebird-midflap.png').convert()
-bird_surface = pygame.transform.scale2x(bird_surface)
+## adds three images for animation, adds to list
+bird_downflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-downflap.png').convert_alpha())
+bird_midflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-midflap.png').convert_alpha())
+bird_upflap = pygame.transform.scale2x(pygame.image.load('assets/bluebird-upflap.png').convert_alpha())
+bird_frames = [bird_downflap,bird_midflap,bird_upflap]
+bird_index = 0
+bird_surface = bird_frames[bird_index]
 bird_rect = bird_surface.get_rect(center = (100,512))
+
+#bird_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+#bird_surface = pygame.transform.scale2x(bird_surface)
+#bird_rect = bird_surface.get_rect(center = (100,512))
 
 pipe_surface = pygame.image.load('assets/pipe-green.png').convert()
 pipe_surface = pygame.transform.scale2x(pipe_surface)
@@ -74,7 +87,7 @@ pipe_list = []
 SPAWNPIPE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPIPE,1200)
 ## possible heights for pipes
-pipe_height = [400,600,800]
+pipe_height = [400,600,800] 
 
 while True:
     for event in pygame.event.get():
@@ -102,8 +115,10 @@ while True:
     if game_active:
         ## Bird gravity
         bird_movement += gravity
+        rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
-        screen.blit(bird_surface,bird_rect)
+        ## Shows rotated bird
+        screen.blit(rotated_bird,bird_rect)
         game_active = check_collision(pipe_list)
 
         pipe_list = move_pipes(pipe_list)
