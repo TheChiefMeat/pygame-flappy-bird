@@ -1,23 +1,46 @@
+## Imports Libraries
 import pygame, sys
 
+## draw_floor function, draws two images of the floor
+def draw_floor():
+    screen.blit(floor_surface,(floor_x_pos,900))
+    ## draws second floor image to the right of the first
+    screen.blit(floor_surface,(floor_x_pos + 576,900))
+
+## initialises pygame
 pygame.init()
+## sets screen resolution
 screen = pygame.display.set_mode((576, 1024))
+## defines clock for game fps
 clock = pygame.time.Clock()
 
+## loads main surface png file for background
 bg_surface = pygame.image.load('assets/background-day.png').convert()
+## scales image x2 to fit screen resolution
 bg_surface = pygame.transform.scale2x(bg_surface)
 
 floor_surface = pygame.image.load('assets/base.png').convert()
 floor_surface = pygame.transform.scale2x(floor_surface)
+## sets floor position to be at 0
+floor_x_pos = 0
 
 while True:
     for event in pygame.event.get():
+        ## if game quit, the quit game
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
+    ## draws surface image at pos 0 0
     screen.blit(bg_surface,(0,0))
-    screen.blit(floor_surface,(0,900))
+    ## redraws floor -1 pixels every frame
+    floor_x_pos -= 1
+    ## calls draw floor function
+    draw_floor()
+    ## if floor is less than 576 (screen res) then
+    ## reset back to 0, creating a looping effect
+    if floor_x_pos <= -576:
+        floor_x_pos = 0
 
     pygame.display.update()
+    ## game fps
     clock.tick(120)
