@@ -29,6 +29,16 @@ def draw_pipes(pipes):
             flip_pipe = pygame.transform.flip(pipe_surface,False,True)
             screen.blit(flip_pipe,pipe)
 
+def check_collision(pipes):
+    for pipe in pipes:
+        if bird_rect.colliderect(pipe):
+            return False
+
+    if bird_rect.top <= -100 or bird_rect.bottom >= 900:
+        return False
+    
+    return True
+
 
 ## initialises pygame
 pygame.init()
@@ -41,6 +51,7 @@ clock = pygame.time.Clock()
 
 gravity = 0.25
 bird_movement = 0
+game_active = True
 
 ## loads main surface png file for background
 bg_surface = pygame.image.load('assets/background-day.png').convert()
@@ -74,23 +85,29 @@ while True:
             sys.exit()
         ## If space bar is pressed, paused gravity and move bird up
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and game_active:
                 bird_movement = 0
                 bird_movement -= 12
+            if event.key == pygame.K_SPACE and game_active == False:
+                game_active = True
+                pipe_list.clear()
+                bird_rect.center = (100,512)
+                bird_movement = 0
         if event.type == SPAWNPIPE:
             pipe_list.extend(create_pipe())
 
     ## draws images
     screen.blit(bg_surface,(0,0))
 
-    ## Bird gravity
+    if game_active:
+        ## Bird gravity
+        bird_movement += gravity
+        bird_rect.centery += bird_movement
+        screen.blit(bird_surface,bird_rect)
+        game_active = check_collision(pipe_list)
 
-    bird_movement += gravity
-    bird_rect.centery += bird_movement
-    screen.blit(bird_surface,bird_rect)
-
-    pipe_list = move_pipes(pipe_list)
-    draw_pipes(pipe_list)
+        pipe_list = move_pipes(pipe_list)
+        draw_pipes(pipe_list)
 
     ## redraws floor -1 pixels every frame
     floor_x_pos -= 1
