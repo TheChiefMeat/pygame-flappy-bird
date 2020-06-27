@@ -44,6 +44,11 @@ def rotate_bird(bird):
     new_bird = pygame.transform.rotozoom(bird,-bird_movement * 3,1)
     return new_bird
 
+def bird_animation():
+    new_bird = bird_frames[bird_index]
+    new_bird_rect = new_bird.get_rect(center = (100,bird_rect.centery))
+    return new_bird,new_bird_rect
+
 ## initialises pygame
 pygame.init()
 ## sets screen resolution
@@ -75,6 +80,10 @@ bird_frames = [bird_downflap,bird_midflap,bird_upflap]
 bird_index = 0
 bird_surface = bird_frames[bird_index]
 bird_rect = bird_surface.get_rect(center = (100,512))
+
+## user event has to be + 1 because user event has already been used. Each time used, + 1
+BIRDFLAP = pygame.USEREVENT + 1
+pygame.time.set_timer(BIRDFLAP,200)
 
 #bird_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
 #bird_surface = pygame.transform.scale2x(bird_surface)
@@ -108,6 +117,14 @@ while True:
                 bird_movement = 0
         if event.type == SPAWNPIPE:
             pipe_list.extend(create_pipe())
+
+        if event.type == BIRDFLAP:
+            ## loops around 1,2,0 animation frames, has to be if statement to stop number getting too big
+            if bird_index < 2:
+                bird_index += 1
+            else:
+                bird_index = 0
+            bird_surface,bird_rect = bird_animation()
 
     ## draws images
     screen.blit(bg_surface,(0,0))
