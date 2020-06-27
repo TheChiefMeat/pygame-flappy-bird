@@ -82,6 +82,10 @@ def intro():
     intro_rect = intro.get_rect(center = (288,512))
     screen.blit(intro, intro_rect)
 
+    author = game_font.render('By TheChiefMeat',True,(255,255,255))
+    author_rect = intro.get_rect(center = (320,800))
+    screen.blit(author, author_rect)
+
 class GameState():
     ## starts the game in the intro state
     def __init__(self):
@@ -205,7 +209,7 @@ class GameState():
 pygame.mixer.pre_init(frequency = 44100, size = 16, channels = 1, buffer = 512)
 ## initialises pygame
 pygame.init()
-pygame.display.set_caption('Flappy Birds Clone by TheChiefMeat')
+pygame.display.set_caption('Flappy Birds')
 game_state = GameState()
 ## sets screen resolution
 screen = pygame.display.set_mode((576, 1024))
